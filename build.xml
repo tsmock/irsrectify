@@ -27,19 +27,19 @@
 **
 **
 -->
-<project name="myPluginName" default="dist" basedir=".">
+<project name="irsrectify" default="dist" basedir=".">
 
     <!-- enter the SVN commit message -->
-    <property name="commit.message" value="Commit message" />
+    <property name="commit.message" value="New plugin - irsrectify" />
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="" />
+    <property name="plugin.main.version" value="3000" />
 
 
     <!--
       ************************************************
       ** should not be necessary to change the following properties
      -->
-    <property name="josm"                   location="../../core/dist/josm-custom.jar"/>
+    <property name="josm"                   location="../../josm-latest.jar"/>
     <property name="plugin.build.dir"       value="build"/>
     <property name="plugin.src.dir"         value="src"/>
     <!-- this is the directory where the plugin jar is copied to -->
@@ -64,7 +64,7 @@
     -->
     <target name="compile" depends="init">
         <echo message="compiling sources for  ${plugin.jar} ... "/>
-        <javac srcdir="src" classpath="${josm}" debug="true" destdir="${plugin.build.dir}">
+        <javac srcdir="src" classpath="${josm};../../dist/wmsplugin.jar" debug="true" destdir="${plugin.build.dir}">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -77,9 +77,6 @@
     -->
     <target name="dist" depends="compile,revision">
         <echo message="creating ${ant.project.name}.jar ... "/>
-        <copy todir="${plugin.build.dir}/resources">
-            <fileset dir="resources"/>
-        </copy>
         <copy todir="${plugin.build.dir}/images">
             <fileset dir="images"/>
         </copy>
@@ -99,14 +96,16 @@
         ************************************************
     -->
             <manifest>
-                <attribute name="Author" value="..."/>
-                <attribute name="Plugin-Class" value="..."/>
+                <attribute name="Author" value="Ilya Zverev"/>
+                <attribute name="Plugin-Class" value="irsrectify.IRSRectifyPlugin"/>
                 <attribute name="Plugin-Date" value="${version.entry.commit.date}"/>
-                <attribute name="Plugin-Description" value="..."/>
-                <attribute name="Plugin-Icon" value="..."/>
-                <attribute name="Plugin-Link" value="..."/>
+                <attribute name="Plugin-Description" value="A helper for IRS satellite adjustment."/>
+                <attribute name="ru_Plugin-Description" value="Удобный инструмент создания файлов привязки космоснимков IRS."/>
+                <attribute name="Plugin-Icon" value="images/irsrectify.png"/>
+                <attribute name="Plugin-Link" value="http://forum.openstreetmap.org/viewtopic.php?id=6817"/>
                 <attribute name="Plugin-Mainversion" value="${plugin.main.version}"/>
                 <attribute name="Plugin-Version" value="${version.entry.commit.revision}"/>
+		<attribute name="Plugin-Requires" value="wmsplugin"/>
             </manifest>
         </jar>
     </target>
@@ -120,14 +119,14 @@
     -->
     <target name="revision">
 
-        <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
+        <exec append="false" output="EVISION" executable="svn" failifexecutionfails="false">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
             <arg value="."/>
         </exec>
         <xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION"/>
+        <!--delete file="REVISION"/-->
     </target>
 
     <!--
